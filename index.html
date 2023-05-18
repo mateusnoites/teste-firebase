@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lades</title>
+
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>    
+</head>
+<body>
+    <h1>Lades</h1>
+    <a href="./adicionarprofessor.html">
+        <button>Cadastrar Professor</button>
+    </a>
+    <hr>
+
+    <h2>Professores</h2>
+    <ol id="professores">Os professores não foram carregados</ol>
+
+    <button onclick="excluirProfessores()">Excluir Todos</button>
+
+    
+    <script>
+        let professoresLista = document.getElementById('professores');
+        professoresLista.innerHTML = "";
+
+        function excluirProfessores() {
+            if (confirm('Deseja excluir todos os professores?') == true) {
+                fetch('https://teste-firebase-lades-default-rtdb.firebaseio.com/professores.json', {
+                    method: 'DELETE'
+                })
+                .then (response => {
+                    if (response.ok) {
+                        alert("Todos os professores foram excluídos com sucesso.");
+                        location.reload(true);
+                    }
+                })
+                .catch(error => {
+                    alert("Erro ao excluir os professores.");
+                    console.error('Erro ao excluir os professores:', error);
+                });
+            }
+        }
+
+        fetch('https://teste-firebase-lades-default-rtdb.firebaseio.com/professores.json')
+        .then(response => response.json())
+        .then(data => {
+            for (const professorId in data) {
+                if (data.hasOwnProperty(professorId)) {
+                    const professor = data[professorId];
+                    const nomeProfessor = professor.nome;
+
+                    const paragrafoProfessor = document.createElement('li');
+                    paragrafoProfessor.innerText = nomeProfessor + " ";
+                    botao = paragrafoProfessor.appendChild(document.createElement('button'));
+                    botao.textContent = "Excluir"
+                    botao.id = professorId;
+                    botao.onclick = (id, nome) => {
+                        id = professorId;
+                        nome = nomeProfessor;
+
+                        fetch(`https://teste-firebase-lades-default-rtdb.firebaseio.com/professores/${id}.json`, {
+                            method: 'DELETE'
+                        })
+                        alert(`Professor ${nomeProfessor} excluído.`)
+                        location.reload(true);
+                    }
+
+                    professoresLista.appendChild(paragrafoProfessor);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao obter os dados dos professores:', error);
+        });
+    </script>
+</body>
+</html>

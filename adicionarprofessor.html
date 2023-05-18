@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Professor</title>
+</head>
+<body>
+    <h1>Lades</h1>
+    <hr>
+
+    <h2>Cadastrar Professor</h2>
+    <form id="formProfessor">
+        <input type="text" name="nome" id="nome" placeholder="Nome do Professor">
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script>
+        const formProfessor = document.getElementById("formProfessor");
+        const nomeInput = document.getElementById("nome");
+
+        formProfessor.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const nomeProfessor = nomeInput.value;
+
+            const novoProfessor = {
+                nome: nomeProfessor
+            }
+
+            fetch('https://teste-firebase-lades-default-rtdb.firebaseio.com/professores.json', {
+                method: 'POST',
+                body: JSON.stringify(novoProfessor)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                console.log('Professor cadastrado:', data);
+                alert('Professor cadastrado com sucesso!');
+                formProfessor.reset();
+
+                window.location.href="./index.html";
+            })
+        });
+    </script>
+</body>
+</html>
